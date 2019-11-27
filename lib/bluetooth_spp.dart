@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:bluetooth_spp/src/device.dart';
 import 'package:flutter/services.dart';
 
-import 'src/device_conn.dart';
+import 'src/connect_channel.dart';
+import 'src/device.dart';
 import 'src/device_service.dart';
 
+export 'src/connect_channel.dart';
 export 'src/device_service.dart';
 export 'src/device.dart';
-export 'src/device_conn.dart';
 
 class BluetoothSpp {
   static BluetoothSpp _instance;
@@ -57,8 +57,19 @@ class BluetoothSpp {
     deviceService.addBondedDevices(deviceList);
   }
 
-  Future<DeviceConn> connect(BluetoothSppDevice device) async {
-    final connId = await _channel.invokeMethod("conn", device.mac);
-    return DeviceConn(connId);
+  Map<String, ConnectChannel> connMap = {};
+
+  Future<ConnectChannel> connect(
+    BluetoothSppDevice device, {
+    bool safe = false,
+  }) async {
+    if (connMap[device.mac] != null) {
+      return connMap[device.mac];
+    }
+    final connId =
+        await _channel.invokeMethod("conn", {"mac": device.mac, "safe": safe});
+    final channel = ConnectChannel(connId);
+    connMap[device.mac] = channel;
+    return channel;
   }
 }

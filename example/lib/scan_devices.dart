@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:bluetooth_spp/bluetooth_spp.dart';
 
@@ -37,9 +40,10 @@ class _ScanDevicePageState extends State<ScanDevicePage> {
       itemBuilder: (BuildContext context, int index) {
         final device = devices[index];
         return ListTile(
+          onLongPress: () => showConnectState(device),
           title: Text(device.name),
           subtitle: Text(device.mac),
-          trailing: Text("rssi:${device.rssi.toString()}"),
+          trailing: buildConnectButton(device),
           leading: SizedBox.fromSize(
             size: Size.square(30),
             child: _buildState(device.bondState),
@@ -73,5 +77,29 @@ class _ScanDevicePageState extends State<ScanDevicePage> {
 
   void _stopScan() {
     BluetoothSpp().stopScan();
+  }
+
+  Widget buildConnectButton(BluetoothSppDevice device) {
+    return FlatButton(
+      child: Text("连接"),
+      onPressed: () async {
+        final connect = await BluetoothSpp().connect(device, safe: true);
+        connect.connect();
+      },
+    );
+  }
+
+  showConnectState(BluetoothSppDevice device) async {
+    final conn = await BluetoothSpp().connect(device);
+
+    final isConnected = await conn.isConnected();
+    print("isConnected = $isConnected");
+
+    final str = "abc\n";
+
+    final l = utf8.encode(str);
+    conn.sendData(Uint8List.fromList(l));
+    // final isConnected = await conn.isConnected();
+    // print(isConnected);
   }
 }

@@ -16,7 +16,7 @@ import top.kikt.bt.spp.bluetooth_spp.core.BluetoothBroadcastReceiver
 import top.kikt.bt.spp.bluetooth_spp.core.BluetoothDeviceConnection
 import top.kikt.bt.spp.bluetooth_spp.core.BluetoothSpp
 
-class BluetoothSppPlugin(registrar: Registrar, channel: MethodChannel) : MethodCallHandler {
+class BluetoothSppPlugin(val registrar: Registrar, channel: MethodChannel) : MethodCallHandler {
   
   private val sppPlugin: BluetoothSpp = BluetoothSpp(registrar)
   private val permissions = RxPermissions(registrar.activity() as FragmentActivity)
@@ -70,13 +70,22 @@ class BluetoothSppPlugin(registrar: Registrar, channel: MethodChannel) : MethodC
       }
       "conn" -> {
         checkPermission(replyHandler) {
-          val mac = call.arguments<String>()
+          val mac = call.argument<String>("mac")!!
+          
+          val connect = BluetoothDeviceConnection.findConnect(mac)
+          if (connect != null) {
+            replyHandler.success(connect.index)
+            return@checkPermission
+          }
+          
+          val safe = call.argument<Boolean>("safe") ?: false
           val device = bluetoothBroadcastReceiver.findDevice(mac)
           if (device == null) {
             replyHandler.error("没找到蓝牙设备")
             return@checkPermission
           }
-          BluetoothDeviceConnection.buildBluetoothDeviceConnection(device)
+          val connection = BluetoothDeviceConnection.buildBluetoothDeviceConnection(registrar, device, safe)
+          replyHandler.success(connection.index)
         }
       }
       else -> replyHandler.notImplemented()

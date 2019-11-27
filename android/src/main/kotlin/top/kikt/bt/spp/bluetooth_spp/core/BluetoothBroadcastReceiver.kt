@@ -23,6 +23,7 @@ class BluetoothBroadcastReceiver(registrar: PluginRegistry.Registrar, val channe
       BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
         notify("scan_started")
         devicesMap.clear()
+        refreshBondDevice()
       }
       BluetoothDevice.ACTION_FOUND -> {
         onFoundDevice(intent)
@@ -30,6 +31,13 @@ class BluetoothBroadcastReceiver(registrar: PluginRegistry.Registrar, val channe
       BluetoothDevice.ACTION_NAME_CHANGED -> {
         onFoundDevice(intent)
       }
+    }
+  }
+  
+  private fun refreshBondDevice() {
+    val devices = BluetoothAdapter.getDefaultAdapter().bondedDevices
+    devices.forEach {
+      devicesMap[it.address] = DeviceWrapper(it, it.name, 255)
     }
   }
   

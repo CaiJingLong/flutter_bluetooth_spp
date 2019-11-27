@@ -39,12 +39,17 @@ class BluetoothSpp(val registrar: PluginRegistry.Registrar) {
     }
   }
   
+  fun getBondDevice(): List<DeviceWrapper> {
+    val bondedDevices = BluetoothAdapter.getDefaultAdapter().bondedDevices
+    return bondedDevices.map {
+      DeviceWrapper(it, it.name, 255)
+    }
+  }
   
   fun getBondDevicesList(): Map<String, Any> {
-    val bondedDevices = BluetoothAdapter.getDefaultAdapter().bondedDevices
-    val resultList = bondedDevices.map {
-      DeviceWrapper(it, it.name, 255).toMap()
-    }.toList()
+    val resultList = getBondDevice().map {
+      it.toMap()
+    }
     return mapOf(
       "data" to resultList
     )
