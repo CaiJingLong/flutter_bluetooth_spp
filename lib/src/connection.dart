@@ -29,6 +29,10 @@ class BluetoothSppConnection extends ChangeNotifier {
     channel.invokeMethod("dispose");
   }
 
+  Future<void> bond(String pin) async {
+    await channel.invokeMethod("bond", {"pin": pin});
+  }
+
   Future<void> sendData(Uint8List data) async {
     if (!await isConnectedAsync()) {
       print("发送失败, 因为没连接");

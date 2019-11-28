@@ -71,10 +71,21 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
   }
 
   Widget _buildHeaders() {
-    return ListTile(
-      title: Text(device.name),
-      subtitle: Text(device.mac),
-      trailing: _buildStateButton(),
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: Text(device.name),
+          subtitle: Text(device.mac),
+          trailing: _buildStateButton(),
+        ),
+        RaisedButton(
+          child: Text("绑定"),
+          onPressed: () async {
+            await connection.bond("0000");
+            print("绑定按钮点击完毕");
+          },
+        ),
+      ],
     );
   }
 
