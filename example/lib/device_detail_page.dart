@@ -71,21 +71,27 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
   }
 
   Widget _buildHeaders() {
-    return Column(
-      children: <Widget>[
-        ListTile(
-          title: Text(device.name),
-          subtitle: Text(device.mac),
-          trailing: _buildStateButton(),
-        ),
-        RaisedButton(
-          child: Text("绑定"),
-          onPressed: () async {
-            await connection.bond("0000");
-            print("绑定按钮点击完毕");
-          },
-        ),
-      ],
+    return AnimatedBuilder(
+      builder: (_, __) => Column(
+        children: <Widget>[
+          ListTile(
+            title: Text(device.name),
+            subtitle: Text(device.mac),
+            trailing: _buildStateButton(),
+          ),
+          if (connection.bondState == BondState.bonded)
+            Text("绑定成功")
+          else
+            RaisedButton(
+              child: Text("绑定"),
+              onPressed: () async {
+                await connection.bond("0000");
+                print("绑定按钮点击完毕");
+              },
+            ),
+        ],
+      ),
+      animation: connection,
     );
   }
 

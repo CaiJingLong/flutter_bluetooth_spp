@@ -3,13 +3,18 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'device.dart';
+
 class BluetoothSppConnection extends ChangeNotifier {
   final int index;
   final MethodChannel channel;
 
   var isConnected = false;
+  BondState bondState = BondState.none;
 
   ValueChanged<Uint8List> onGetData;
+
+  BluetoothSppDevice device;
 
   BluetoothSppConnection(this.index)
       : channel = MethodChannel("top.kikt/spp/$index") {
@@ -61,12 +66,22 @@ class BluetoothSppConnection extends ChangeNotifier {
       case "state_changed":
         onStateChange(call.arguments);
         break;
+      case "bond_state_changed":
+        onBondStateChange(call.arguments);
     }
   }
 
   void onStateChange(arguments) {
     isConnected = arguments;
     print("连接状态改变: $arguments");
+    notifyListeners();
+  }
+
+  void onBondStateChange(arguments) {
+    final stateInt = arguments["state"];
+    final state = BondState.values[stateInt];
+    bondState = state;
+    device?.bondState = state;
     notifyListeners();
   }
 }

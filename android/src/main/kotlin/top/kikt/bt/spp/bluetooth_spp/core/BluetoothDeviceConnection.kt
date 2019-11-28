@@ -106,7 +106,23 @@ class BluetoothDeviceConnection private constructor(val registry: PluginRegistry
   }
   
   private fun bond(replyHandler: ReplyHandler, pin: String) {
-    val receiver = BondReceiver(registry.context(), deviceWrapper, replyHandler, pin)
+    deviceWrapper.device.bondState
+    val receiver = BondReceiver(registry.context(), deviceWrapper, replyHandler, pin) { device, state ->
+      if (deviceWrapper.device.address == device.address) {
+        val stateValue = when (state) {
+          BluetoothDevice.BOND_NONE -> 0
+          BluetoothDevice.BOND_BONDING -> 1
+          BluetoothDevice.BOND_BONDED -> 2
+          else -> 0
+        }
+        val params = mapOf(
+          "mac" to device.address,
+          "originState" to state,
+          "state" to stateValue
+        )
+        invokeMethod("bond_state_changed", params)
+      }
+    }
     registry.context().registerReceiver(receiver, IntentFilter().apply {
       addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
       addAction(BluetoothDevice.ACTION_PAIRING_REQUEST)
@@ -159,13 +175,13 @@ class BluetoothDeviceConnection private constructor(val registry: PluginRegistry
   
   private fun notifyConnectionState() {
     runOnMainThread {
-      channel.invokeMethod("state_changed", isConnected())
+      invokeMethod("state_changed", isConnected())
     }
   }
   
   private fun notifyBytes(bytes: ByteArray) {
     runOnMainThread {
-      channel.invokeMethod("rec", bytes)
+      invokeMethod("rec", bytes)
     }
   }
   
@@ -174,9 +190,13 @@ class BluetoothDeviceConnection private constructor(val registry: PluginRegistry
       socket = null
       val stringWriter = StringWriter()
       e.printStackTrace(PrintWriter(stringWriter))
-      channel.invokeMethod("error", stringWriter.toString())
+      invokeMethod("error", stringWriter.toString())
       notifyConnectionState()
     }
+  }
+  
+  private fun invokeMethod(method: String, any: Any?) {
+    channel.invokeMethod(method, any)
   }
   
   private fun dispose() {

@@ -23,8 +23,13 @@ class BluetoothSppDevice {
   BluetoothSppConnection get connection => _connection;
 
   set connection(BluetoothSppConnection connection) {
+    if (_connection == connection) {
+      return;
+    }
     _connection = connection;
+    connection.device = this;
     connection.onGetData = this._onGetData;
+    connection.bondState = this.bondState;
   }
 
   Future<BluetoothSppConnection> refreshBluetoothConnectionState() async {

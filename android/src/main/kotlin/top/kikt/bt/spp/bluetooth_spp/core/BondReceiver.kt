@@ -9,7 +9,7 @@ import top.kikt.bt.spp.bluetooth_spp.ReplyHandler
 import top.kikt.bt.spp.bluetooth_spp.logger
 
 /// create 2019-11-28 by cai
-class BondReceiver(val context: Context, val deviceWrapper: DeviceWrapper, val replyHandler: ReplyHandler, val pin: String) : BroadcastReceiver() {
+class BondReceiver(private val context: Context, private val deviceWrapper: DeviceWrapper, private val replyHandler: ReplyHandler, private val pin: String, val onStateChange: (device: BluetoothDevice, state: Int) -> Unit) : BroadcastReceiver() {
   
   override fun onReceive(context: Context, intent: Intent) {
     when (intent.action) {
@@ -22,15 +22,18 @@ class BondReceiver(val context: Context, val deviceWrapper: DeviceWrapper, val r
         }
         if (state == BluetoothDevice.BOND_NONE) {
           reportResult(0)
+          onStateChange(device, state)
           return
         }
         if (state == BluetoothDevice.BOND_BONDING) {
           logger.info("开始绑定")
+          onStateChange(device, state)
           return
         }
         if (state == BluetoothDevice.BOND_BONDED) {
           logger.info("绑定成功")
           reportResult(1)
+          onStateChange(device, state)
           return
         }
       }
