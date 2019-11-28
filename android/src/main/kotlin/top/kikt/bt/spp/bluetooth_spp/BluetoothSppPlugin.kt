@@ -29,6 +29,7 @@ class BluetoothSppPlugin(val registrar: Registrar, channel: MethodChannel) : Met
       addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
       addAction(BluetoothDevice.ACTION_FOUND)
       addAction(BluetoothDevice.ACTION_NAME_CHANGED)
+      addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
     })
   }
   
@@ -66,6 +67,11 @@ class BluetoothSppPlugin(val registrar: Registrar, channel: MethodChannel) : Met
       "getBondDevices" -> {
         checkPermission(replyHandler) {
           replyHandler.success(sppPlugin.getBondDevicesList())
+        }
+      }
+      "isEnabled" -> {
+        checkPermission(replyHandler) {
+          replyHandler.success(sppPlugin.isEnabled())
         }
       }
       "conn" -> {

@@ -25,12 +25,27 @@ class BluetoothBroadcastReceiver(registrar: PluginRegistry.Registrar, val channe
         devicesMap.clear()
         refreshBondDevice()
       }
+      BluetoothAdapter.ACTION_STATE_CHANGED -> {
+        onStateChange(intent)
+      }
       BluetoothDevice.ACTION_FOUND -> {
         onFoundDevice(intent)
       }
       BluetoothDevice.ACTION_NAME_CHANGED -> {
         onFoundDevice(intent)
       }
+    }
+  }
+  
+  private fun onStateChange(intent: Intent) {
+    val value = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1)
+    if (value == -1) {
+      return
+    }
+    if (value == BluetoothAdapter.STATE_OFF) {
+      notify("state_change", 2)
+    } else if (value == BluetoothAdapter.STATE_ON) {
+      notify("state_change", 1)
     }
   }
   

@@ -54,4 +54,8 @@ class BluetoothSpp(val registrar: PluginRegistry.Registrar) {
       "data" to resultList
     )
   }
+  
+  fun isEnabled(): Int {
+    return if (adapter.isEnabled) 1 else 0
+  }
 }

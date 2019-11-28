@@ -22,8 +22,7 @@ class _HomePageState extends State<HomePage> {
       body: Container(
         child: Column(
           children: <Widget>[
-            buildButton("打开", spp.enable),
-            buildButton("关闭", spp.disable),
+            buildStateButton(),
             buildButton("去扫描设备", () => routeWidget(ScanDevicePage())),
           ],
         ),
@@ -32,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildButton(String text, Function onTap) {
-    return FlatButton(
+    return RaisedButton(
       child: Text(text),
       onPressed: onTap,
     );
@@ -44,5 +43,26 @@ class _HomePageState extends State<HomePage> {
         MaterialPageRoute(
           builder: (_) => widget,
         ));
+  }
+
+  final manager = SppDeviceManager.getInstance();
+
+  Widget buildStateButton() {
+    return AnimatedBuilder(
+      animation: manager,
+      builder: (_, __) {
+        return CheckboxListTile(
+          title: Text("蓝牙是否开启"),
+          onChanged: (bool value) {
+            if (value) {
+              spp.enable();
+            } else {
+              spp.disable();
+            }
+          },
+          value: manager.bluetoothEnable,
+        );
+      },
+    );
   }
 }

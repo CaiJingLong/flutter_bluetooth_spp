@@ -27,7 +27,7 @@ class BluetoothSppDevice {
     connection.onGetData = this._onGetData;
   }
 
-  Future<BluetoothSppConnection> refreshChannel() async {
+  Future<BluetoothSppConnection> refreshBluetoothConnection() async {
     connection = await BluetoothSpp().connect(this);
     return connection;
   }

@@ -8,8 +8,8 @@ class BluetoothSpp {
   static BluetoothSpp _instance;
 
   BluetoothSpp._() {
-    deviceService = SppDeviceManager.getInstance();
-    _channel.setMethodCallHandler(deviceService.handle);
+    deviceManager = SppDeviceManager.getInstance();
+    _channel.setMethodCallHandler(deviceManager.handle);
   }
 
   static const MethodChannel _channel =
@@ -25,7 +25,7 @@ class BluetoothSpp {
     return _instance;
   }
 
-  SppDeviceManager deviceService;
+  SppDeviceManager deviceManager;
 
   void enable() {
     _channel.invokeMethod("enable");
@@ -33,6 +33,10 @@ class BluetoothSpp {
 
   void disable() {
     _channel.invokeMethod("disable");
+  }
+
+  static Future<bool> isEnabled() async {
+    return (await _channel.invokeMethod("isEnabled") == 1);
   }
 
   void scan() {
@@ -48,7 +52,7 @@ class BluetoothSpp {
     List data = result["data"];
     final deviceList =
         data.map((map) => BluetoothSppDevice.fromMap(map)).toList();
-    deviceService.addBondedDevices(deviceList);
+    deviceManager.addBondedDevices(deviceList);
   }
 
   /// key 是 mac address , value 是 Connection
