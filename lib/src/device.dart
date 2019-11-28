@@ -1,3 +1,6 @@
+import 'package:bluetooth_spp/bluetooth_spp.dart';
+import 'package:bluetooth_spp/src/connect_channel.dart';
+
 class BluetoothSppDevice {
   /// mac地址
   String mac;
@@ -10,6 +13,13 @@ class BluetoothSppDevice {
 
   /// 绑定状态
   BondState bondState;
+
+  ConnectChannel connectChannel;
+
+  Future<ConnectChannel> refreshChannel() async {
+    connectChannel = await BluetoothSpp().connect(this);
+    return connectChannel;
+  }
 
   BluetoothSppDevice.fromMap(Map<dynamic, dynamic> map) {
     this.mac = map["mac"];

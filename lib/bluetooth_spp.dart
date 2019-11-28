@@ -70,6 +70,7 @@ class BluetoothSpp {
         await _channel.invokeMethod("conn", {"mac": device.mac, "safe": safe});
     final channel = ConnectChannel(connId);
     connMap[device.mac] = channel;
+    device.connectChannel = channel;
     return channel;
   }
 }

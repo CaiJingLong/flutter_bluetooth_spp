@@ -125,6 +125,7 @@ class BluetoothDeviceConnection private constructor(registry: PluginRegistry.Reg
     }
     threadPool.execute {
       val `is` = socket?.inputStream ?: return@execute
+      notifyConnectionState()
       while (true) {
         try {
           val bytes = `is`.readBytes()
@@ -141,6 +142,12 @@ class BluetoothDeviceConnection private constructor(registry: PluginRegistry.Reg
     return socket?.isConnected == true
   }
   
+  private fun notifyConnectionState() {
+    runOnMainThread {
+      channel.invokeMethod("state_changed", isConnected())
+    }
+  }
+  
   private fun notifyBytes(bytes: ByteArray) {
     runOnMainThread {
       channel.invokeMethod("rec", bytes)
@@ -152,6 +159,7 @@ class BluetoothDeviceConnection private constructor(registry: PluginRegistry.Reg
       val stringWriter = StringWriter()
       e.printStackTrace(PrintWriter(stringWriter))
       channel.invokeMethod("error", stringWriter.toString())
+      notifyConnectionState()
     }
   }
   

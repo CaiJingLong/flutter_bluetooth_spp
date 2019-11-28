@@ -1,11 +1,14 @@
-import 'dart:ffi';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class ConnectChannel {
+class ConnectChannel extends ChangeNotifier {
   final int index;
   final MethodChannel channel;
+
+  var isConnected = false;
+
   ConnectChannel(this.index) : channel = MethodChannel("top.kikt/spp/$index") {
     channel.setMethodCallHandler(handle);
   }
@@ -19,6 +22,7 @@ class ConnectChannel {
   }
 
   Future<void> dispose() async {
+    super.dispose();
     channel.invokeMethod("dispose");
   }
 
@@ -26,7 +30,11 @@ class ConnectChannel {
     channel.invokeMethod("sendData", data);
   }
 
-  Future<bool> isConnected() async {
+  Future<void> sendListData(List<int> data) async {
+    await sendData(Uint8List.fromList(data));
+  }
+
+  Future<bool> isConnectedAsync() async {
     return channel.invokeMethod("isConnected");
   }
 
@@ -39,10 +47,19 @@ class ConnectChannel {
       case "error":
         print(call.arguments);
         break;
+      case "state_changed":
+        onStateChange(call.arguments);
+        break;
     }
   }
 
   void onGetData(Uint8List data) {
     print("接受到消息: $data");
+  }
+
+  void onStateChange(arguments) {
+    isConnected = arguments;
+    print("连接状态改变: $arguments");
+    notifyListeners();
   }
 }

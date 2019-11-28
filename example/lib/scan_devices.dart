@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:bluetooth_spp/bluetooth_spp.dart';
 
+import 'device_detail_page.dart';
+
 class ScanDevicePage extends StatefulWidget {
   @override
   _ScanDevicePageState createState() => _ScanDevicePageState();
@@ -40,10 +42,10 @@ class _ScanDevicePageState extends State<ScanDevicePage> {
       itemBuilder: (BuildContext context, int index) {
         final device = devices[index];
         return ListTile(
-          onLongPress: () => showConnectState(device),
+          onTap: () => showDetail(device),
           title: Text(device.name),
           subtitle: Text(device.mac),
-          trailing: buildConnectButton(device),
+          // trailing: buildConnectButton(device),
           leading: SizedBox.fromSize(
             size: Size.square(30),
             child: _buildState(device.bondState),
@@ -89,17 +91,14 @@ class _ScanDevicePageState extends State<ScanDevicePage> {
     );
   }
 
-  showConnectState(BluetoothSppDevice device) async {
-    final conn = await BluetoothSpp().connect(device);
-
-    final isConnected = await conn.isConnected();
-    print("isConnected = $isConnected");
-
-    final str = "abc\n";
-
-    final l = utf8.encode(str);
-    conn.sendData(Uint8List.fromList(l));
-    // final isConnected = await conn.isConnected();
-    // print(isConnected);
+  void showDetail(BluetoothSppDevice device) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DeviceDetailPage(
+          device: device,
+        ),
+      ),
+    );
   }
 }
