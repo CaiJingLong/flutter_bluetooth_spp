@@ -1,7 +1,9 @@
 package top.kikt.bt.spp.bluetooth_spp.core
 
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
+import android.content.IntentFilter
 import android.util.SparseArray
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -18,7 +20,7 @@ import kotlin.collections.HashMap
 import kotlin.concurrent.withLock
 
 /// create 2019-11-27 by cai
-class BluetoothDeviceConnection private constructor(registry: PluginRegistry.Registrar, val index: Int, private val device: DeviceWrapper, private val safeMethod: Boolean = false) : MethodChannel.MethodCallHandler {
+class BluetoothDeviceConnection private constructor(val registry: PluginRegistry.Registrar, val index: Int, private val deviceWrapper: DeviceWrapper, private val safeMethod: Boolean = false) : MethodChannel.MethodCallHandler {
   
   companion object {
     const val uuidString = "00001101-0000-1000-8000-00805F9B34FB"
@@ -96,7 +98,20 @@ class BluetoothDeviceConnection private constructor(registry: PluginRegistry.Reg
       "isConnected" -> {
         replyHandler.success(isConnected())
       }
+      "bond" -> {
+        val pin = call.argument<String>("pin")!!
+        bond(replyHandler, pin)
+      }
     }
+  }
+  
+  private fun bond(replyHandler: ReplyHandler, pin: String) {
+    val receiver = BondReceiver(registry.context(), deviceWrapper, replyHandler, pin)
+    registry.context().registerReceiver(receiver, IntentFilter().apply {
+      addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
+      addAction(BluetoothDevice.ACTION_PAIRING_REQUEST)
+    })
+    deviceWrapper.device.createBond()
   }
   
   private fun disconnect() {
@@ -107,7 +122,7 @@ class BluetoothDeviceConnection private constructor(registry: PluginRegistry.Reg
   
   private fun connect(replyHandler: ReplyHandler) {
     val uuid = UUID.fromString(uuidString)
-    val bluetoothDevice = device.device
+    val bluetoothDevice = deviceWrapper.device
     socket = if (safeMethod) {
       bluetoothDevice.createRfcommSocketToServiceRecord(uuid)
     } else {
@@ -167,7 +182,7 @@ class BluetoothDeviceConnection private constructor(registry: PluginRegistry.Reg
   private fun dispose() {
     disconnect()
     deviceArray.remove(index)
-    macMap.remove(device.mac)
+    macMap.remove(deviceWrapper.mac)
   }
   
 }
