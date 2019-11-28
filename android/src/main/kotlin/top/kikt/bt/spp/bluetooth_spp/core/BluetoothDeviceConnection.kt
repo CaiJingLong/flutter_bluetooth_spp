@@ -137,24 +137,24 @@ class BluetoothDeviceConnection private constructor(val registry: PluginRegistry
   }
   
   private fun connect(replyHandler: ReplyHandler) {
-    val uuid = UUID.fromString(uuidString)
-    val bluetoothDevice = deviceWrapper.device
-    socket = if (safeMethod) {
-      bluetoothDevice.createRfcommSocketToServiceRecord(uuid)
-    } else {
-      bluetoothDevice.createInsecureRfcommSocketToServiceRecord(uuid)
-    }
-    
     // 按照connect方法的说明, 连接前应始终停止发现过程, 无论这个发现是否是应用创建的, 这里不判断是否在发现中, 强行停止即可
     BluetoothAdapter.getDefaultAdapter().cancelDiscovery()
     
-    try {
-      socket?.connect()
-    } catch (e: Exception) {
-      replyHandler.success(1)
-      return
-    }
     threadPool.execute {
+      try {
+        val uuid = UUID.fromString(uuidString)
+        val bluetoothDevice = deviceWrapper.device
+        socket = if (safeMethod) {
+          bluetoothDevice.createRfcommSocketToServiceRecord(uuid)
+        } else {
+          bluetoothDevice.createInsecureRfcommSocketToServiceRecord(uuid)
+        }
+        
+        socket?.connect()
+      } catch (e: Exception) {
+        replyHandler.success(1)
+        return@execute
+      }
       val `is` = socket?.inputStream ?: return@execute
       notifyConnectionState()
       while (true) {
