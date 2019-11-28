@@ -33,7 +33,7 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
   @override
   void initState() {
     super.initState();
-    device.refreshBluetoothConnection().then((_) {
+    device.refreshBluetoothConnectionState().then((_) {
       setState(() {});
     });
     ctl.text = "hello";
