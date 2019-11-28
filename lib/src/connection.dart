@@ -84,4 +84,9 @@ class BluetoothSppConnection extends ChangeNotifier {
     device?.bondState = state;
     notifyListeners();
   }
+
+  Future<BondState> getBondStateAsync() async {
+    final stateInt = await channel.invokeMethod("getBondState");
+    return BondState.values[stateInt];
+  }
 }

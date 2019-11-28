@@ -33,7 +33,7 @@ class BluetoothSppDevice {
   }
 
   Future<BluetoothSppConnection> refreshBluetoothConnectionState() async {
-    connection = await BluetoothSpp().connect(this);
+    connection = await Spp().connect(this);
     return connection;
   }
 

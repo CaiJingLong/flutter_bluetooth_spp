@@ -120,16 +120,26 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
         String stateText = connection.isConnected ? "断开" : "连接";
         return FlatButton(
           child: Text(stateText),
-          onPressed: () {
-            if (!connection.isConnected) {
-              connection.connect();
-            } else {
-              connection.disconnect();
-            }
-          },
+          onPressed: bindAndconnect,
         );
       },
     );
+  }
+
+  void bindAndconnect() async {
+    if (await connection.getBondStateAsync() != BondState.bonded) {
+      // 未绑定, 先进行绑定操作
+      await connection.bond("0000");
+      if (await connection.getBondStateAsync() != BondState.bonded) {
+        print("绑定失败,请重新尝试");
+        return;
+      }
+    }
+    if (!connection.isConnected) {
+      connection.connect();
+    } else {
+      connection.disconnect();
+    }
   }
 
   Widget _buildSendBar() {

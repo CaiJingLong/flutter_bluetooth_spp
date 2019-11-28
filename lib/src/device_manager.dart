@@ -4,24 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'device.dart';
 
-class SppDeviceManager extends ChangeNotifier {
-  static SppDeviceManager _instance;
-
-  SppDeviceManager._() {
-    initEnableState();
-  }
-
-  factory SppDeviceManager.getInstance() {
-    _instance ??= SppDeviceManager._();
-    return _instance;
-  }
-
-  void initEnableState() {
-    BluetoothSpp.isEnabled().then((value) {
-      bluetoothEnable = value;
-      notifyListeners();
-    });
-  }
+mixin SppDeviceManager on ChangeNotifier {
+  MethodChannel channel = const MethodChannel('top.kikt/bluetooth_spp');
 
   Map<String, BluetoothSppDevice> deviceMap = {};
 

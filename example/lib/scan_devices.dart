@@ -26,14 +26,14 @@ class _ScanDevicePageState extends State<ScanDevicePage> {
         ],
       ),
       body: AnimatedBuilder(
-        animation: SppDeviceManager.getInstance(),
+        animation: Spp(),
         builder: (ctx, w) => _buildListView(),
       ),
     );
   }
 
   Widget _buildListView() {
-    final devices = SppDeviceManager.getInstance().devices();
+    final devices = Spp().devices();
     return ListView.builder(
       itemCount: devices.length,
       itemBuilder: (BuildContext context, int index) {
@@ -70,19 +70,19 @@ class _ScanDevicePageState extends State<ScanDevicePage> {
   }
 
   void _scan() async {
-    await BluetoothSpp().refreshBondDevice();
-    BluetoothSpp().scan();
+    await Spp().refreshBondDevice();
+    Spp().scan();
   }
 
   void _stopScan() {
-    BluetoothSpp().stopScan();
+    Spp().stopScan();
   }
 
   Widget buildConnectButton(BluetoothSppDevice device) {
     return FlatButton(
       child: Text("连接"),
       onPressed: () async {
-        final connect = await BluetoothSpp().connect(device, safe: true);
+        final connect = await Spp().connect(device, safe: true);
         connect.connect();
       },
     );

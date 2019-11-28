@@ -1,54 +1,54 @@
-import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 
 import 'device_manager.dart';
 import 'device.dart';
 import 'connection.dart';
 
-class BluetoothSpp {
-  static BluetoothSpp _instance;
+class Spp with ChangeNotifier, SppDeviceManager {
+  static Spp _instance;
 
-  BluetoothSpp._() {
-    deviceManager = SppDeviceManager.getInstance();
-    _channel.setMethodCallHandler(deviceManager.handle);
+  Spp._() {
+    channel.setMethodCallHandler(this.handle);
+    isEnabled().then((value) {
+      bluetoothEnable = value;
+      notifyListeners();
+    });
   }
 
-  static const MethodChannel _channel =
-      const MethodChannel('top.kikt/bluetooth_spp');
-
   Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
+    final String version = await channel.invokeMethod('getPlatformVersion');
     return version;
   }
 
-  factory BluetoothSpp() {
-    _instance ??= BluetoothSpp._();
+  factory Spp() {
+    _instance ??= Spp._();
     return _instance;
   }
 
-  SppDeviceManager deviceManager;
+  SppDeviceManager get deviceManager => this;
 
   void enable() {
-    _channel.invokeMethod("enable");
+    channel.invokeMethod("enable");
   }
 
   void disable() {
-    _channel.invokeMethod("disable");
+    channel.invokeMethod("disable");
   }
 
-  static Future<bool> isEnabled() async {
-    return (await _channel.invokeMethod("isEnabled") == 1);
+  Future<bool> isEnabled() async {
+    return (await channel.invokeMethod("isEnabled") == 1);
   }
 
   void scan() {
-    _channel.invokeMethod("scan");
+    channel.invokeMethod("scan");
   }
 
   void stopScan() {
-    _channel.invokeMethod("stop");
+    channel.invokeMethod("stop");
   }
 
   Future<void> refreshBondDevice() async {
-    final result = await _channel.invokeMethod("getBondDevices");
+    final result = await channel.invokeMethod("getBondDevices");
     List data = result["data"];
     final deviceList =
         data.map((map) => BluetoothSppDevice.fromMap(map)).toList();
@@ -66,7 +66,7 @@ class BluetoothSpp {
       return connectionMap[device.mac];
     }
     final connId =
-        await _channel.invokeMethod("conn", {"mac": device.mac, "safe": safe});
+        await channel.invokeMethod("conn", {"mac": device.mac, "safe": safe});
     final connection = BluetoothSppConnection(connId);
     connectionMap[device.mac] = connection;
     device.connection = connection;

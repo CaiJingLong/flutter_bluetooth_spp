@@ -8,7 +8,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final spp = BluetoothSpp();
+  final spp = Spp();
 
   @override
   void initState() {
@@ -45,11 +45,9 @@ class _HomePageState extends State<HomePage> {
         ));
   }
 
-  final manager = SppDeviceManager.getInstance();
-
   Widget buildStateButton() {
     return AnimatedBuilder(
-      animation: manager,
+      animation: spp,
       builder: (_, __) {
         return CheckboxListTile(
           title: Text("蓝牙是否开启"),
@@ -60,7 +58,7 @@ class _HomePageState extends State<HomePage> {
               spp.disable();
             }
           },
-          value: manager.bluetoothEnable,
+          value: spp.bluetoothEnable,
         );
       },
     );

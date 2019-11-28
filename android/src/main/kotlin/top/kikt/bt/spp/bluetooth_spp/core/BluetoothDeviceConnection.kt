@@ -28,6 +28,9 @@ class BluetoothDeviceConnection private constructor(val registry: PluginRegistry
     private val lock = ReentrantLock()
     private var index = 0
     
+    private val adapter
+      get() = BluetoothAdapter.getDefaultAdapter()
+    
     private fun makeIndex(): Int {
       lock.withLock {
         val index = this.index
@@ -97,6 +100,15 @@ class BluetoothDeviceConnection private constructor(val registry: PluginRegistry
       }
       "isConnected" -> {
         replyHandler.success(isConnected())
+      }
+      "getBondState" -> {
+        val bondInt = when (deviceWrapper.device.bondState) {
+          BluetoothDevice.BOND_BONDED -> 2
+          BluetoothDevice.BOND_BONDING -> 1
+          BluetoothDevice.BOND_NONE -> 0
+          else -> 0
+        }
+        replyHandler.success(bondInt)
       }
       "bond" -> {
         val pin = call.argument<String>("pin")!!
