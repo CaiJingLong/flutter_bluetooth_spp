@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:bluetooth_spp/bluetooth_spp.dart';
 // import 'package:gbk_codec/gbk_codec.dart';
@@ -17,7 +19,7 @@ class DeviceDetailPage extends StatefulWidget {
 
 class DeviceDetailPageState extends State<DeviceDetailPage> {
   BluetoothSppDevice get device => widget.device;
-  BluetoothSppConnection get connection => device.connectChannel;
+  BluetoothSppConnection get connection => device.connection;
 
   final ctl = TextEditingController();
 
@@ -35,10 +37,13 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
       setState(() {});
     });
     ctl.text = "hello";
+
+    device.addListener(_onGetData);
   }
 
   @override
   void dispose() {
+    device.removeListener(_onGetData);
     ctl.dispose();
     super.dispose();
   }
@@ -128,5 +133,9 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
         },
       ),
     );
+  }
+
+  void _onGetData(Uint8List value) {
+    print("获取到信息 :$value");
   }
 }

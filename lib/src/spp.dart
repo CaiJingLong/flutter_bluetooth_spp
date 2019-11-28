@@ -51,20 +51,21 @@ class BluetoothSpp {
     deviceService.addBondedDevices(deviceList);
   }
 
-  Map<String, BluetoothSppConnection> connMap = {};
+  /// key 是 mac address , value 是 Connection
+  Map<String, BluetoothSppConnection> connectionMap = {};
 
   Future<BluetoothSppConnection> connect(
     BluetoothSppDevice device, {
     bool safe = false,
   }) async {
-    if (connMap[device.mac] != null) {
-      return connMap[device.mac];
+    if (connectionMap[device.mac] != null) {
+      return connectionMap[device.mac];
     }
     final connId =
         await _channel.invokeMethod("conn", {"mac": device.mac, "safe": safe});
-    final channel = BluetoothSppConnection(connId);
-    connMap[device.mac] = channel;
-    device.connectChannel = channel;
-    return channel;
+    final connection = BluetoothSppConnection(connId);
+    connectionMap[device.mac] = connection;
+    device.connection = connection;
+    return connection;
   }
 }

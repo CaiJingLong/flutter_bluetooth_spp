@@ -9,6 +9,8 @@ class BluetoothSppConnection extends ChangeNotifier {
 
   var isConnected = false;
 
+  ValueChanged<Uint8List> onGetData;
+
   BluetoothSppConnection(this.index)
       : channel = MethodChannel("top.kikt/spp/$index") {
     channel.setMethodCallHandler(handle);
@@ -47,7 +49,7 @@ class BluetoothSppConnection extends ChangeNotifier {
     switch (call.method) {
       case "rec":
         Uint8List data = call.arguments;
-        onGetData(data);
+        onGetData?.call(data);
         break;
       case "error":
         print(call.arguments);
@@ -56,10 +58,6 @@ class BluetoothSppConnection extends ChangeNotifier {
         onStateChange(call.arguments);
         break;
     }
-  }
-
-  void onGetData(Uint8List data) {
-    print("接受到消息: $data");
   }
 
   void onStateChange(arguments) {
