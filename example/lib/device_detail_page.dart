@@ -90,7 +90,7 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
 
   Widget _buildStateButton() {
     if (connection == null) {
-      return Container();
+      return null;
     }
     return AnimatedBuilder(
       animation: connection,
