@@ -17,7 +17,7 @@ class DeviceDetailPage extends StatefulWidget {
 
 class DeviceDetailPageState extends State<DeviceDetailPage> {
   BluetoothSppDevice get device => widget.device;
-  ConnectChannel get connection => device.connectChannel;
+  BluetoothSppConnection get connection => device.connectChannel;
 
   final ctl = TextEditingController();
 

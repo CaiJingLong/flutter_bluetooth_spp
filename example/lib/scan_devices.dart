@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:bluetooth_spp/bluetooth_spp.dart';
 
@@ -29,14 +26,14 @@ class _ScanDevicePageState extends State<ScanDevicePage> {
         ],
       ),
       body: AnimatedBuilder(
-        animation: SppDeviceService.getInstance(),
+        animation: SppDeviceManager.getInstance(),
         builder: (ctx, w) => _buildListView(),
       ),
     );
   }
 
   Widget _buildListView() {
-    final devices = SppDeviceService.getInstance().devices();
+    final devices = SppDeviceManager.getInstance().devices();
     return ListView.builder(
       itemCount: devices.length,
       itemBuilder: (BuildContext context, int index) {

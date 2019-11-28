@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'device.dart';
 
-class SppDeviceService extends ChangeNotifier {
-  static SppDeviceService _instance;
+class SppDeviceManager extends ChangeNotifier {
+  static SppDeviceManager _instance;
 
-  SppDeviceService._();
+  SppDeviceManager._();
 
-  factory SppDeviceService.getInstance() {
-    _instance ??= SppDeviceService._();
+  factory SppDeviceManager.getInstance() {
+    _instance ??= SppDeviceManager._();
     return _instance;
   }
 

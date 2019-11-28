@@ -1,5 +1,5 @@
 import 'package:bluetooth_spp/bluetooth_spp.dart';
-import 'package:bluetooth_spp/src/connect_channel.dart';
+import 'connection.dart';
 
 class BluetoothSppDevice {
   /// mac地址
@@ -14,9 +14,9 @@ class BluetoothSppDevice {
   /// 绑定状态
   BondState bondState;
 
-  ConnectChannel connectChannel;
+  BluetoothSppConnection connectChannel;
 
-  Future<ConnectChannel> refreshChannel() async {
+  Future<BluetoothSppConnection> refreshChannel() async {
     connectChannel = await BluetoothSpp().connect(this);
     return connectChannel;
   }

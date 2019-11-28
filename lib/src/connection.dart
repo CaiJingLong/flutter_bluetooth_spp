@@ -3,13 +3,14 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class ConnectChannel extends ChangeNotifier {
+class BluetoothSppConnection extends ChangeNotifier {
   final int index;
   final MethodChannel channel;
 
   var isConnected = false;
 
-  ConnectChannel(this.index) : channel = MethodChannel("top.kikt/spp/$index") {
+  BluetoothSppConnection(this.index)
+      : channel = MethodChannel("top.kikt/spp/$index") {
     channel.setMethodCallHandler(handle);
   }
 
