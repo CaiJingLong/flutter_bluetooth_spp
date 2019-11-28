@@ -27,6 +27,10 @@ class ConnectChannel extends ChangeNotifier {
   }
 
   Future<void> sendData(Uint8List data) async {
+    if (!await isConnectedAsync()) {
+      print("发送失败, 因为没连接");
+      return;
+    }
     channel.invokeMethod("sendData", data);
   }
 

@@ -156,6 +156,7 @@ class BluetoothDeviceConnection private constructor(registry: PluginRegistry.Reg
   
   private fun throwError(e: Exception) {
     runOnMainThread {
+      socket = null
       val stringWriter = StringWriter()
       e.printStackTrace(PrintWriter(stringWriter))
       channel.invokeMethod("error", stringWriter.toString())
