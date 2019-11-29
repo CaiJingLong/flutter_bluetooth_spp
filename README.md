@@ -1,6 +1,10 @@
 # bluetooth_spp
 
-关于蓝牙 spp 的封装
+关于蓝牙 spp 的封装, 仅支持安卓
+
+iOS 不支持 SPP 协议, iOS 仅支持 IAP 协议(也就是需要通过 MFI 认证)
+
+BLE 协议单独使用另一个库开发
 
 ## 基本流程
 
