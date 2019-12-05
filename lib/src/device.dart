@@ -57,6 +57,16 @@ class BluetoothSppDevice {
   void removeListener(ValueChanged<Uint8List> listener) {
     _notifier.removeObserver(listener);
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BluetoothSppDevice &&
+          runtimeType == other.runtimeType &&
+          mac == other.mac;
+
+  @override
+  int get hashCode => mac.hashCode;
 }
 
 enum BondState {
