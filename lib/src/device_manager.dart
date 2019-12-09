@@ -50,6 +50,7 @@ mixin SppDeviceManager on ChangeNotifier {
   void addBondedDevices(List<BluetoothSppDevice> deviceList) {
     deviceList.forEach((device) {
       deviceMap[device.mac] = device;
+      foundDeviceStream.addData(device);
     });
     notifyListeners();
   }
