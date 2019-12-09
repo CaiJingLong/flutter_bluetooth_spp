@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,19 @@ class BluetoothSppConnection extends ChangeNotifier {
   BondState bondState = BondState.none;
 
   ValueChanged<Uint8List> onGetData;
+
+  StreamController<Uint8List> _dataController = StreamController.broadcast();
+
+  Stream<Uint8List> get dataStream => _dataController.stream;
+
+  StreamController<BondState> _bondStateController =
+      StreamController.broadcast();
+
+  Stream<BondState> get bondStateStream => _bondStateController.stream;
+
+  StreamController<bool> _connectController = StreamController.broadcast();
+
+  Stream<bool> get connectStream => _connectController.stream;
 
   BluetoothSppDevice device;
 
@@ -32,6 +46,9 @@ class BluetoothSppConnection extends ChangeNotifier {
   Future<void> dispose() async {
     super.dispose();
     channel.invokeMethod("dispose");
+    _dataController.close();
+    _bondStateController.close();
+    _connectController.close();
   }
 
   Future<void> bond(String pin) async {
@@ -59,6 +76,7 @@ class BluetoothSppConnection extends ChangeNotifier {
       case "rec":
         Uint8List data = call.arguments;
         onGetData?.call(data);
+        _dataController.add(data);
         break;
       case "error":
         print(call.arguments);
@@ -74,6 +92,7 @@ class BluetoothSppConnection extends ChangeNotifier {
   void onStateChange(arguments) {
     isConnected = arguments;
     print("连接状态改变: $arguments");
+    _connectController.add(isConnected);
     notifyListeners();
   }
 
@@ -82,6 +101,7 @@ class BluetoothSppConnection extends ChangeNotifier {
     final state = BondState.values[stateInt];
     bondState = state;
     device?.bondState = state;
+    _bondStateController.add(state);
     notifyListeners();
   }
 
