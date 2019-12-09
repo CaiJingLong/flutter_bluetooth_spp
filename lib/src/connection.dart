@@ -86,6 +86,7 @@ class BluetoothSppConnection extends ChangeNotifier {
         break;
       case "bond_state_changed":
         onBondStateChange(call.arguments);
+        break;
     }
   }
 
