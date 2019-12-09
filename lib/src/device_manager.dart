@@ -3,6 +3,7 @@ import 'package:bluetooth_spp/src/device.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'device.dart';
+import 'stream_helper.dart';
 
 mixin SppDeviceManager on ChangeNotifier {
   MethodChannel channel = const MethodChannel('top.kikt/bluetooth_spp');
@@ -12,6 +13,10 @@ mixin SppDeviceManager on ChangeNotifier {
   bool _bluetoothEnable = false;
 
   bool get bluetoothEnable => _bluetoothEnable;
+
+  StreamHelper<BluetoothSppDevice> foundDeviceStream = StreamHelper();
+  StreamHelper<bool> switchStream = StreamHelper();
+  StreamHelper<bool> scanStream = StreamHelper();
 
   set bluetoothEnable(bool bluetoothEnable) {
     _bluetoothEnable = bluetoothEnable;
@@ -23,18 +28,21 @@ mixin SppDeviceManager on ChangeNotifier {
 
   Future<dynamic> handle(MethodCall call) async {
     if (call.method == "scan_started") {
+      scanStream.addData(true);
       notifyListeners();
     } else if (call.method == "scan_finish") {
+      scanStream.addData(false);
       notifyListeners();
     } else if (call.method == "found_device") {
       final device = BluetoothSppDevice.fromMap(call.arguments);
       print("找到一台新蓝牙设备 : ${device.mac}, name : ${device.name}");
       deviceMap[device.mac] = device;
+      foundDeviceStream.addData(device);
       notifyListeners();
     } else if (call.method == "state_change") {
       print("蓝牙状态改变: ${call.arguments}");
       bluetoothEnable = call.arguments == 1;
-      // bluetoothEnable = await BluetoothSpp().isEnabled();
+      switchStream.addData(bluetoothEnable);
       notifyListeners();
     }
   }
