@@ -52,7 +52,9 @@ class BluetoothBroadcastReceiver(registrar: PluginRegistry.Registrar, val channe
   private fun refreshBondDevice() {
     val devices = BluetoothAdapter.getDefaultAdapter().bondedDevices
     devices.forEach {
-      devicesMap[it.address] = DeviceWrapper(it, it.name, 255)
+      val deviceWrapper = DeviceWrapper(it, it.name, 255)
+      devicesMap[it.address] = deviceWrapper
+      notifyFoundDevice(deviceWrapper)
     }
   }
   
@@ -67,6 +69,10 @@ class BluetoothBroadcastReceiver(registrar: PluginRegistry.Registrar, val channe
     
     val deviceWrapper = DeviceWrapper(device, name, rssi)
     devicesMap[deviceWrapper.mac] = deviceWrapper
+    notifyFoundDevice(deviceWrapper)
+  }
+  
+  private fun notifyFoundDevice(deviceWrapper: DeviceWrapper) {
     notify("found_device", deviceWrapper.toMap())
   }
   
