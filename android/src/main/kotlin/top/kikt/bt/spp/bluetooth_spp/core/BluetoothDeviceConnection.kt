@@ -169,10 +169,14 @@ class BluetoothDeviceConnection private constructor(val registry: PluginRegistry
       }
       val `is` = socket?.inputStream ?: return@execute
       notifyConnectionState()
+  
+      val buffer = ByteArray(10240)
       while (true) {
         try {
-          val bytes = `is`.readBytes()
-          notifyBytes(bytes)
+          val offset = `is`.read(buffer, 0, 10240)
+          val dst = ByteArray(offset)
+          buffer.copyInto(dst, 0, 0, offset)
+          notifyBytes(dst)
         } catch (e: Exception) {
           throwError(e)
           break

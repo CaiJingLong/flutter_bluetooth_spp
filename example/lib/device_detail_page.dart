@@ -64,6 +64,7 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
           Expanded(
             child: _buildBody(),
           ),
+          _buildSendUint8ListButton(),
           _buildSendBar(),
         ],
       ),
@@ -171,6 +172,19 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
   }
 
   void _onGetData(Uint8List value) {
-    print("获取到信息 :$value");
+    // print("获取到信息 :$value");
+    final text = gbk.decode(value);
+    print("获取到信息:");
+    print("$text");
+  }
+
+  _buildSendUint8ListButton() {
+    return RaisedButton(
+      child: Text("发送测试数据"),
+      onPressed: () async {
+        final data = Uint8List.fromList([0x1D, 0x67, 0x34]);
+        await connection.sendData(data);
+      },
+    );
   }
 }
