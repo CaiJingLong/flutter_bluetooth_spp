@@ -71,6 +71,14 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
   }
 
   Widget _buildHeaders() {
+    if (connection == null) {
+      return Center(
+        child: Container(
+          height: 40,
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return AnimatedBuilder(
       builder: (_, __) => Column(
         children: <Widget>[
