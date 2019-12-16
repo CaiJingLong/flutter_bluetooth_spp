@@ -63,6 +63,6 @@ class BluetoothSpp(val registrar: PluginRegistry.Registrar) {
   
   fun supportSpp(context: Context): Boolean {
     val pm = context.packageManager
-    return pm.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH) || BluetoothAdapter.getDefaultAdapter() == null
+    return pm.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH) && BluetoothAdapter.getDefaultAdapter() != null
   }
 }
