@@ -1,6 +1,8 @@
 package top.kikt.bt.spp.bluetooth_spp.core
 
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
+import android.content.pm.PackageManager
 import io.flutter.plugin.common.PluginRegistry
 import top.kikt.bt.spp.bluetooth_spp.DeviceWrapper
 import top.kikt.bt.spp.bluetooth_spp.logger
@@ -56,6 +58,11 @@ class BluetoothSpp(val registrar: PluginRegistry.Registrar) {
   }
   
   fun isEnabled(): Int {
-    return if (adapter.isEnabled) 1 else 0
+    return if (adapter?.isEnabled == true) 1 else 0
+  }
+  
+  fun supportSpp(context: Context): Boolean {
+    val pm = context.packageManager
+    return pm.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)
   }
 }

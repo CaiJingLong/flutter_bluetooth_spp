@@ -14,6 +14,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   fast_gbk: ^0.1.0
   provider: ^3.0.0
+  oktoast: ^2.0.0
 
 dev_dependencies:
   flutter_test:

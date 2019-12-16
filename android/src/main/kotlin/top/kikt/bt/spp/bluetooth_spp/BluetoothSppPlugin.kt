@@ -16,7 +16,7 @@ import top.kikt.bt.spp.bluetooth_spp.core.BluetoothBroadcastReceiver
 import top.kikt.bt.spp.bluetooth_spp.core.BluetoothDeviceConnection
 import top.kikt.bt.spp.bluetooth_spp.core.BluetoothSpp
 
-class BluetoothSppPlugin(val registrar: Registrar, channel: MethodChannel) : MethodCallHandler {
+class BluetoothSppPlugin(private val registrar: Registrar, channel: MethodChannel) : MethodCallHandler {
   
   private val sppPlugin: BluetoothSpp = BluetoothSpp(registrar)
   private val permissions = RxPermissions(registrar.activity() as FragmentActivity)
@@ -48,6 +48,10 @@ class BluetoothSppPlugin(val registrar: Registrar, channel: MethodChannel) : Met
         checkPermission(replyHandler) {
           sppPlugin.enable()
         }
+      }
+      "supportSpp" -> {
+        val supportSpp = sppPlugin.supportSpp(registrar.context())
+        replyHandler.success(supportSpp)
       }
       "disable" -> {
         checkPermission(replyHandler) {

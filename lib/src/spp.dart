@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 
 import 'device_manager.dart';
@@ -9,8 +11,11 @@ class Spp with ChangeNotifier, SppDeviceManager {
 
   Spp._() {
     channel.setMethodCallHandler(this.handle);
-    isEnabled().then((value) {
-      bluetoothEnable = value;
+    supportSpp().then((supportSpp) async {
+      if (!supportSpp) {
+        return;
+      }
+      bluetoothEnable = await isEnabled();
       notifyListeners();
     });
   }
@@ -23,6 +28,13 @@ class Spp with ChangeNotifier, SppDeviceManager {
   factory Spp() {
     _instance ??= Spp._();
     return _instance;
+  }
+
+  Future<bool> supportSpp() async {
+    if (!Platform.isAndroid) {
+      return false;
+    }
+    return channel.invokeMethod("supportSpp");
   }
 
   SppDeviceManager get deviceManager => this;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oktoast/oktoast.dart';
 
 import 'home_page.dart';
 
@@ -12,8 +13,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: HomePage(),
+    return OKToast(
+      child: MaterialApp(
+        home: HomePage(),
+      ),
     );
   }
 }
