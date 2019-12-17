@@ -20,6 +20,10 @@ class _ScanDevicePageState extends State<ScanDevicePage> {
             onPressed: _stopScan,
           ),
           IconButton(
+            icon: Icon(Icons.bluetooth_connected),
+            onPressed: _enhanceScan,
+          ),
+          IconButton(
             icon: Icon(Icons.bluetooth),
             onPressed: _scan,
           ),
@@ -97,5 +101,9 @@ class _ScanDevicePageState extends State<ScanDevicePage> {
         ),
       ),
     );
+  }
+
+  void _enhanceScan() {
+    Spp().enhanceScan();
   }
 }

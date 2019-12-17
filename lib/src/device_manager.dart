@@ -14,6 +14,8 @@ mixin SppDeviceManager on ChangeNotifier {
 
   bool get bluetoothEnable => _bluetoothEnable;
 
+  bool isScaning = false;
+
   StreamHelper<BluetoothSppDevice> foundDeviceStream = StreamHelper();
   StreamHelper<bool> switchStream = StreamHelper();
   StreamHelper<bool> scanStream = StreamHelper();
@@ -28,9 +30,11 @@ mixin SppDeviceManager on ChangeNotifier {
 
   Future<dynamic> handle(MethodCall call) async {
     if (call.method == "scan_started") {
+      isScaning = true;
       scanStream.addData(true);
       notifyListeners();
     } else if (call.method == "scan_finish") {
+      isScaning = false;
       scanStream.addData(false);
       notifyListeners();
     } else if (call.method == "found_device") {

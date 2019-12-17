@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -51,7 +52,24 @@ class Spp with ChangeNotifier, SppDeviceManager {
     return (await channel.invokeMethod("isEnabled") == 1);
   }
 
+  /// 增强扫描模式
+  ///
+  /// 有些设备在正常情况下无法扫描到, 需要先关闭,并开启蓝牙开关才可搜索到
+  void enhanceScan() {
+    StreamSubscription sub;
+    sub = this.switchStream.listen((_) {
+      if (bluetoothEnable) {
+        scan();
+        sub.cancel();
+      } else {
+        enable();
+      }
+    });
+    disable();
+  }
+
   void scan() {
+    deviceMap.clear();
     channel.invokeMethod("scan");
   }
 
