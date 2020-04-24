@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.IntentFilter
+import android.os.Build
 import androidx.fragment.app.FragmentActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.flutter.plugin.common.MethodCall
@@ -104,7 +105,17 @@ class BluetoothSppPlugin(private val registrar: Registrar, channel: MethodChanne
   
   @SuppressLint("CheckResult")
   private fun checkPermission(handler: ReplyHandler, runnable: () -> Unit) {
-    permissions.request(Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN)
+    val info = arrayListOf(
+      Manifest.permission.BLUETOOTH,
+      Manifest.permission.BLUETOOTH_ADMIN,
+      Manifest.permission.ACCESS_FINE_LOCATION)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      info.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+    }
+    
+    permissions.request(*info.toTypedArray())
+    
+    permissions.request(*info.toTypedArray())
       .subscribe {
         if (it) {
           runnable()
