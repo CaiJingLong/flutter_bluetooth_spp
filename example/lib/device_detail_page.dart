@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:bluetooth_spp/bluetooth_spp.dart';
+
 // import 'package:gbk_codec/gbk_codec.dart';
 import 'package:fast_gbk/fast_gbk.dart';
 
@@ -9,8 +10,8 @@ class DeviceDetailPage extends StatefulWidget {
   final BluetoothSppDevice device;
 
   const DeviceDetailPage({
-    Key key,
-    @required this.device,
+    Key? key,
+    required this.device,
   }) : super(key: key);
 
   @override
@@ -19,7 +20,8 @@ class DeviceDetailPage extends StatefulWidget {
 
 class DeviceDetailPageState extends State<DeviceDetailPage> {
   BluetoothSppDevice get device => widget.device;
-  BluetoothSppConnection get connection => device.connection;
+
+  BluetoothSppConnection? get connection => device.connection;
 
   final ctl = TextEditingController();
 
@@ -88,19 +90,19 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
             subtitle: Text(device.mac),
             trailing: _buildStateButton(),
           ),
-          if (connection.bondState == BondState.bonded)
+          if (connection?.bondState == BondState.bonded)
             Text("绑定成功")
           else
             RaisedButton(
               child: Text("绑定"),
               onPressed: () async {
-                await connection.bond("0000");
+                await connection?.bond("0000");
                 print("绑定按钮点击完毕");
               },
             ),
         ],
       ),
-      animation: connection,
+      animation: connection!,
     );
   }
 
@@ -121,12 +123,12 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
 
   Widget _buildStateButton() {
     if (connection == null) {
-      return null;
+      return Container();
     }
     return AnimatedBuilder(
-      animation: connection,
-      builder: (BuildContext context, Widget child) {
-        String stateText = connection.isConnected ? "断开" : "连接";
+      animation: connection!,
+      builder: (BuildContext context, Widget? child) {
+        String stateText = connection!.isConnected ? "断开" : "连接";
         return FlatButton(
           child: Text(stateText),
           onPressed: bindAndconnect,
@@ -136,18 +138,18 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
   }
 
   void bindAndconnect() async {
-    if (await connection.getBondStateAsync() != BondState.bonded) {
+    if (await connection?.getBondStateAsync() != BondState.bonded) {
       // 未绑定, 先进行绑定操作
-      await connection.bond("0000");
-      if (await connection.getBondStateAsync() != BondState.bonded) {
+      await connection?.bond("0000");
+      if (await connection?.getBondStateAsync() != BondState.bonded) {
         print("绑定失败,请重新尝试");
         return;
       }
     }
-    if (!connection.isConnected) {
-      connection.connect();
+    if (connection?.isConnected != true) {
+      connection?.connect();
     } else {
-      connection.disconnect();
+      connection?.disconnect();
     }
   }
 
@@ -164,14 +166,14 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
         ),
         onEditingComplete: () async {
           final data = gbk.encode(ctl.text + "\n");
-          await connection.sendListData(data);
+          await connection?.sendListData(data);
           addText(ctl.text);
         },
       ),
     );
   }
 
-  void _onGetData(Uint8List value) {
+  void _onGetData(Uint8List? value) {
     // print("获取到信息 :$value");
     final text = gbk.decode(value);
     print("获取到信息:");
@@ -183,7 +185,7 @@ class DeviceDetailPageState extends State<DeviceDetailPage> {
       child: Text("发送测试数据"),
       onPressed: () async {
         final data = Uint8List.fromList([0x1D, 0x67, 0x34]);
-        await connection.sendData(data);
+        await connection?.sendData(data);
       },
     );
   }

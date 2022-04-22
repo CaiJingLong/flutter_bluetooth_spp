@@ -2,37 +2,36 @@ import 'dart:typed_data';
 
 import 'package:bluetooth_spp/bluetooth_spp.dart';
 import 'package:flutter/material.dart';
-import 'connection.dart';
 import 'value_change_notifier.dart';
 
 class BluetoothSppDevice {
   /// mac地址
-  String mac;
+  late String mac;
 
   /// 名字
-  String name;
+  late String name;
 
   /// rssi信号
-  int rssi;
+  late int rssi;
 
   /// 绑定状态
-  BondState bondState;
+  late BondState bondState;
 
-  BluetoothSppConnection _connection;
+  BluetoothSppConnection? _connection;
 
-  BluetoothSppConnection get connection => _connection;
+  BluetoothSppConnection? get connection => _connection;
 
-  set connection(BluetoothSppConnection connection) {
+  set connection(BluetoothSppConnection? connection) {
     if (_connection == connection) {
       return;
     }
     _connection = connection;
-    connection.device = this;
-    connection.onGetData = this._onGetData;
-    connection.bondState = this.bondState;
+    connection?.device = this;
+    connection?.onGetData = this._onGetData;
+    connection?.bondState = this.bondState;
   }
 
-  Future<BluetoothSppConnection> refreshBluetoothConnectionState() async {
+  Future<BluetoothSppConnection?> refreshBluetoothConnectionState() async {
     connection = await Spp().connect(this);
     return connection;
   }
@@ -50,11 +49,11 @@ class BluetoothSppDevice {
     _notifier.changeValue(value);
   }
 
-  void addListener(ValueChanged<Uint8List> listener) {
+  void addListener(ValueChanged<Uint8List?> listener) {
     _notifier.addObserver(listener);
   }
 
-  void removeListener(ValueChanged<Uint8List> listener) {
+  void removeListener(ValueChanged<Uint8List?> listener) {
     _notifier.removeObserver(listener);
   }
 

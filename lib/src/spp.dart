@@ -2,13 +2,14 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'device_manager.dart';
 import 'device.dart';
 import 'connection.dart';
 
 class Spp with ChangeNotifier, SppDeviceManager {
-  static Spp _instance;
+  static Spp? _instance;
 
   Spp._() {
     channel.setMethodCallHandler(this.handle);
@@ -28,14 +29,38 @@ class Spp with ChangeNotifier, SppDeviceManager {
 
   factory Spp() {
     _instance ??= Spp._();
-    return _instance;
+    return _instance!;
+  }
+
+  Future<void> requestPermission() async {
+    assert(Platform.isAndroid, 'Only Android supported');
+    // 其实就是申请权限
+    if (!Platform.isAndroid) {
+      return;
+    }
+    // 申请几个权限，蓝牙，位置，蓝牙 Admin
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.bluetooth,
+      Permission.location,
+      Permission.bluetoothAdvertise,
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan,
+    ].request();
+
+    // 没有就直接报错
+    statuses.forEach((permission, status) {
+      if (status != PermissionStatus.granted) {
+        throw Exception('Permission ${permission.toString()} not granted');
+      }
+    });
   }
 
   Future<bool> supportSpp() async {
     if (!Platform.isAndroid) {
       return false;
     }
-    return channel.invokeMethod("supportSpp");
+    final result = await channel.invokeMethod("supportSpp");
+    return result;
   }
 
   SppDeviceManager get deviceManager => this;
@@ -56,11 +81,11 @@ class Spp with ChangeNotifier, SppDeviceManager {
   ///
   /// 有些设备在正常情况下无法扫描到, 需要先关闭,并开启蓝牙开关才可搜索到
   void enhanceScan() {
-    StreamSubscription sub;
+    StreamSubscription? sub;
     sub = this.switchStream.listen((_) {
       if (bluetoothEnable) {
         scan();
-        sub.cancel();
+        sub?.cancel();
       } else {
         enable();
       }
@@ -88,7 +113,7 @@ class Spp with ChangeNotifier, SppDeviceManager {
   /// key 是 mac address , value 是 Connection
   Map<String, BluetoothSppConnection> connectionMap = {};
 
-  Future<BluetoothSppConnection> connect(
+  Future<BluetoothSppConnection?> connect(
     BluetoothSppDevice device, {
     bool safe = false,
   }) async {

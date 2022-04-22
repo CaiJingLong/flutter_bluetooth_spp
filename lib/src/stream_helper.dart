@@ -2,6 +2,7 @@ import 'dart:async';
 
 class StreamHelper<T> extends Stream<T> {
   StreamController<T> _ctl = StreamController.broadcast();
+
   Stream<T> get stream => _ctl.stream;
 
   void addData(T value) {
@@ -13,8 +14,12 @@ class StreamHelper<T> extends Stream<T> {
   }
 
   @override
-  StreamSubscription<T> listen(void Function(T event) onData,
-      {Function onError, void Function() onDone, bool cancelOnError}) {
+  StreamSubscription<T> listen(
+    void onData(T event)?, {
+    Function? onError,
+    void onDone()?,
+    bool? cancelOnError,
+  }) {
     return stream.listen(
       onData,
       cancelOnError: cancelOnError,
@@ -22,4 +27,5 @@ class StreamHelper<T> extends Stream<T> {
       onError: onError,
     );
   }
+
 }

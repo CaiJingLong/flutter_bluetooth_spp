@@ -13,7 +13,7 @@ class BluetoothSppConnection extends ChangeNotifier {
   var isConnected = false;
   BondState bondState = BondState.none;
 
-  ValueChanged<Uint8List> onGetData;
+  ValueChanged<Uint8List>? onGetData;
 
   StreamController<Uint8List> _dataController = StreamController.broadcast();
 
@@ -28,7 +28,7 @@ class BluetoothSppConnection extends ChangeNotifier {
 
   Stream<bool> get connectStream => _connectController.stream;
 
-  BluetoothSppDevice device;
+  BluetoothSppDevice? device;
 
   BluetoothSppConnection(this.index)
       : channel = MethodChannel("top.kikt/spp/$index") {
@@ -68,7 +68,8 @@ class BluetoothSppConnection extends ChangeNotifier {
   }
 
   Future<bool> isConnectedAsync() async {
-    return channel.invokeMethod("isConnected");
+    final result = await channel.invokeMethod("isConnected");
+    return result == true;
   }
 
   Future<dynamic> handle(MethodCall call) async {

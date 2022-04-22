@@ -1,6 +1,7 @@
+
+import 'package:bluetooth_spp/bluetooth_spp.dart';
 import 'package:bluetooth_spp_example/scan_devices.dart';
 import 'package:flutter/material.dart';
-import 'package:bluetooth_spp/bluetooth_spp.dart';
 import 'package:oktoast/oktoast.dart';
 
 class HomePage extends StatefulWidget {
@@ -39,7 +40,7 @@ class _HomePageState extends State<HomePage> {
     routeWidget(ScanDevicePage());
   }
 
-  Widget buildButton(String text, Function onTap) {
+  Widget buildButton(String text, VoidCallback onTap) {
     return RaisedButton(
       child: Text(text),
       onPressed: onTap,
@@ -64,8 +65,8 @@ class _HomePageState extends State<HomePage> {
             builder: (_, __) {
               return CheckboxListTile(
                 title: Text("蓝牙是否开启"),
-                onChanged: (bool value) {
-                  if (value) {
+                onChanged: (bool? value) {
+                  if (value != true) {
                     spp.enable();
                   } else {
                     spp.disable();

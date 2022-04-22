@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
 
-class ValueChangeNotifier<T> extends ValueNotifier<T> {
+class ValueChangeNotifier<T> extends ValueNotifier<T?> {
   ValueChangeNotifier() : super(null);
 
-  List<ValueChanged<T>> _observers = [];
+  List<ValueChanged<T?>> _observers = [];
 
-  void addObserver(ValueChanged<T> observer) {
+  void addObserver(ValueChanged<T?> observer) {
     _observers.add(observer);
   }
 
-  void removeObserver(ValueChanged<T> observer) {
+  void removeObserver(ValueChanged<T?> observer) {
     _observers.remove(observer);
   }
 

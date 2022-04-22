@@ -87,7 +87,7 @@ class _ScanDevicePageState extends State<ScanDevicePage> {
       child: Text("连接"),
       onPressed: () async {
         final connect = await Spp().connect(device, safe: true);
-        connect.connect();
+        connect?.connect();
       },
     );
   }

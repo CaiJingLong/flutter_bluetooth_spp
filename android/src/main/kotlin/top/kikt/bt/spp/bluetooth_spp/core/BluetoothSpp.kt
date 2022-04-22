@@ -8,7 +8,7 @@ import top.kikt.bt.spp.bluetooth_spp.DeviceWrapper
 import top.kikt.bt.spp.bluetooth_spp.logger
 
 /// create 2019-11-27 by cai
-class BluetoothSpp(val registrar: PluginRegistry.Registrar) {
+class BluetoothSpp {
   
   private val adapter = BluetoothAdapter.getDefaultAdapter()
   
