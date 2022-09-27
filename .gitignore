@@ -5,3 +5,7 @@
 .pub/
 
 build/
+.env
+.pubspec.lock
+.idea
+.flutter-plugins-dependencies
