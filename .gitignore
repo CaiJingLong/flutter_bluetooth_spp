@@ -6,6 +6,6 @@
 
 build/
 .env
-.pubspec.lock
+pubspec.lock
 .idea
 .flutter-plugins-dependencies
