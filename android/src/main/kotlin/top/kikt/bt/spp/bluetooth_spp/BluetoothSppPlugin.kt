@@ -7,7 +7,7 @@ import android.bluetooth.BluetoothDevice
 import android.content.IntentFilter
 import android.os.Build
 import androidx.fragment.app.FragmentActivity
-import com.tbruyelle.rxpermissions2.RxPermissions
+import com.tbruyelle.rxpermissions3.RxPermissions
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -134,8 +134,6 @@ class BluetoothSppPlugin(private val registrar: Registrar, channel: MethodChanne
                 )
             )
         }
-
-        permissions.request(*info.toTypedArray())
 
         permissions.request(*info.toTypedArray())
             .subscribe {
