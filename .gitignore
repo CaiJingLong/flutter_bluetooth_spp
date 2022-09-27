@@ -7,5 +7,9 @@
 build/
 .env
 pubspec.lock
-.idea
+
+.idea/
+.gradle/
 .flutter-plugins-dependencies
+.project
+.settings

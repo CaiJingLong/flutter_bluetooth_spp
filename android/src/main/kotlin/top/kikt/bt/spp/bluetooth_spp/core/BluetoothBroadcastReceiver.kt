@@ -63,10 +63,10 @@ class BluetoothBroadcastReceiver(registrar: PluginRegistry.Registrar, val channe
       return
     }
     
-    val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+    val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
     val name: String? = intent.getStringExtra(BluetoothDevice.EXTRA_NAME)
     val rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, 255)
-    
+
     val deviceWrapper = DeviceWrapper(device, name, rssi)
     devicesMap[deviceWrapper.mac] = deviceWrapper
     notifyFoundDevice(deviceWrapper)

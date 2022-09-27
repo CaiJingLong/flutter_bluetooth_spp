@@ -9,23 +9,23 @@ class Logger(val any: Any) {
   private val tag = any.javaClass.simpleName
   
   fun verbose(any: Any?) {
-    Log.v(tag, any?.toString())
+    Log.v(tag, any.toString())
   }
   
   fun info(any: Any?) {
-    Log.i(tag, any?.toString())
+    Log.i(tag, any.toString())
   }
   
   fun debug(any: Any?) {
-    Log.d(tag, any?.toString())
+    Log.d(tag, any.toString())
   }
   
   fun warning(any: Any?) {
-    Log.w(tag, any?.toString())
+    Log.w(tag, any.toString())
   }
   
   fun error(any: Any?) {
-    Log.e(tag, any?.toString())
+    Log.e(tag, any.toString())
   }
   
 }
