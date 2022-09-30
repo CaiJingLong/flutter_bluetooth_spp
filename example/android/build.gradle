@@ -10,7 +10,7 @@ buildscript {
     }
 
     ext {
-        kotlin_version = '1.5.31'
+        kotlin_version = '1.7.10'
         agp_version = "4.2.0"
     }
 

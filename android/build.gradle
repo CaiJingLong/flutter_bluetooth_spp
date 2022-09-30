@@ -2,7 +2,9 @@ group 'top.kikt.bt.spp.bluetooth_spp'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.5.31'
+    ext {
+        kotlin_version = '1.7.10'
+    }
     repositories {
         maven {
             url 'https://maven.aliyun.com/repository/google'
